@@ -1,6 +1,10 @@
+# Xcode and system files
 .DS_Store
 build
 Build
 Products
 *.pbxuser
 *.perspectivev3
+
+# Unity junk files
+Library/
