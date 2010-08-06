@@ -100,7 +100,7 @@ public class GUISpriteToggleButton : GUITouchableSprite
 
 
 	// Touch handlers
-	public override void onTouchEnded( Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		highlighted = false;
 		

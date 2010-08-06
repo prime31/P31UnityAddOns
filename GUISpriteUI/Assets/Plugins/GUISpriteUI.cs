@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 
 public class GUISpriteUI : GUISpriteManager
@@ -18,12 +19,8 @@ public class GUISpriteUI : GUISpriteManager
 	private GUITouchableSprite[] _spriteSelected;
 	private Vector2 _screenResolution;
 	
-	// Holds all our touchable sprites in its 'itmes' ivar
-	private GUITouchableSpriteListManager _touchables = new GUITouchableSpriteListManager();
-	
-	private int[] _touchIds;
-	private bool[] _touchUsed;
-	private int _numTouches;
+	// Holds all our touchable sprites
+	private List<GUITouchableSprite> _touchableSprites = new List<GUITouchableSprite>();
 
 	
 	#region Unity MonoBehaviour Functions
@@ -51,8 +48,10 @@ public class GUISpriteUI : GUISpriteManager
 		
 		if ( iPhoneSettings.screenOrientation == iPhoneScreenOrientation.Landscape )
 		{
-			_screenResolution = new Vector2( 480.0f, 320.0f );
-			_uiCamera.orthographicSize = 160.0f;
+			//_screenResolution = new Vector2( 480.0f, 320.0f );
+			//_uiCamera.orthographicSize = 160.0f;
+			_screenResolution = new Vector2( Screen.width, Screen.height );
+			_uiCamera.orthographicSize = Screen.height / 2;
 		}
 		else
 		{
@@ -78,40 +77,17 @@ public class GUISpriteUI : GUISpriteManager
 		_spriteSelected = new GUITouchableSprite[MAX_CHANGED_TOUCHES];
 		for( int i = 0; i < MAX_CHANGED_TOUCHES; ++i )
 			_spriteSelected[i] = null;
-		
-		_touchIds = new int[MAX_CHANGED_TOUCHES];
-		_touchUsed = new bool[MAX_CHANGED_TOUCHES];
-		for( int i = 0; i < MAX_CHANGED_TOUCHES; i++ )
-			_touchUsed[i] = false;
-
-		_numTouches = 0;
 	}
 
 
 	protected void Update()
 	{
 		// Only do our touch processing if we have some touches
-		if( iPhoneInput.touchCount > 0 )
+		if( Input.touchCount > 0 )
 		{
 			// Examine all current touches
-			for( int i = 0; i < iPhoneInput.touchCount; i++ )
-				lookAtTouch( iPhoneInput.GetTouch( i ) );
-			
-			// Check all the unused touches so we can call exit if a touch isn't on a button anymore
-			for( int i = _numTouches - 1; i >= 0; --i )
-			{
-				if( _touchUsed[i] == false )
-				{
-					if( _spriteSelected[i] != null )
-						_spriteSelected[i].onTouchEnded( Vector2.zero, false );
-	
-					removeTouch( i );
-				}
-			}
-			
-			// Set all touchUsed to false
-			for( int i = 0; i < MAX_CHANGED_TOUCHES; ++i )
-				_touchUsed[i] = false;
+			for( int i = 0; i < Input.touchCount; i++ )
+				lookAtTouch( Input.GetTouch( i ) );
 		}
 
 		// Take care of updating our UVs, colors or bounds if necessary
@@ -148,9 +124,9 @@ public class GUISpriteUI : GUISpriteManager
 	{
 		addSprite( touchableSprite );
 		
-		// Add the sprite to our touchables and sort them
-		_touchables.add( touchableSprite );
-		Array.Sort( _touchables.items );
+		// Add the sprite to our touchables and sort them		
+		_touchableSprites.Add( touchableSprite );
+		_touchableSprites.Sort();
 	}
 	
 	#endregion;
@@ -161,7 +137,7 @@ public class GUISpriteUI : GUISpriteManager
 	{
 		// If we are removing a GUITouchableSprite remove it from our internal array as well
 		if( sprite is GUITouchableSprite )
-			_touchables.remove( sprite as GUITouchableSprite );
+			_touchableSprites.Remove( sprite as GUITouchableSprite );
 
 		removeSprite( sprite );
 	}
@@ -170,102 +146,60 @@ public class GUISpriteUI : GUISpriteManager
 	#region Touch management and analysis helpers
 	
 	// Examines a touch and sends off began, moved and ended events
-	private void lookAtTouch( iPhoneTouch touch )
+	private void lookAtTouch( Touch touch )
 	{
 		// Tranform the touch position so the origin is in the top left
 		Vector2 fixedTouchPosition = new Vector2( touch.position.x, _screenResolution.y - touch.position.y );
 		GUITouchableSprite button = getButtonForScreenPosition( fixedTouchPosition );
 
-		int touchIndex = getTouchIndex( touch.fingerId );
-		bool touchEnded = ( touch.phase == iPhoneTouchPhase.Ended || touch.phase == iPhoneTouchPhase.Canceled );
+		bool touchEnded = ( touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled );
 		
-		if( touch.phase == iPhoneTouchPhase.Began || ( touchIndex == -1 && !touchEnded ) )
+		if( touch.phase == TouchPhase.Began )
 		{
-			touchIndex = _numTouches++;
-			_touchIds[touchIndex] = touch.fingerId;
-			
 			if( button != null )
 			{
-				_spriteSelected[touchIndex] = button;
-				button.onTouchBegan( fixedTouchPosition );
+				_spriteSelected[touch.fingerId] = button;
+				button.onTouchBegan( touch, fixedTouchPosition );
 			}
 			else
 			{
 				// Deselect any selected sprites for this touch
-				_spriteSelected[touchIndex] = null;
+				_spriteSelected[touch.fingerId] = null;
 			}
-			_touchUsed[touchIndex] = true;
 		}
-		else if( touch.phase == iPhoneTouchPhase.Moved || touch.phase == iPhoneTouchPhase.Stationary )
+		else if( touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary )
 		{
-			if( button != null )
+			if( button != null && _spriteSelected[touch.fingerId] == button )
 			{
-				// If we moved over a button that we were not over previously, call onTouchBegan
-				if( _spriteSelected[touchIndex] == null )
-				{
-					_spriteSelected[touchIndex] = button;
-					button.onTouchBegan( fixedTouchPosition );
-				}
-				else if( _spriteSelected[touchIndex] != button )
-				{
-					_spriteSelected[touchIndex].onTouchEnded( fixedTouchPosition, false );
-					
-					_spriteSelected[touchIndex] = button;
-					button.onTouchBegan( fixedTouchPosition );
-				}
-				else if( touch.phase == iPhoneTouchPhase.Moved )
-				{
-					_spriteSelected[touchIndex].onTouchMoved( fixedTouchPosition );
-				}
+				// If we have a moving touch on a sprite keep sending touchMoved
+				if( touch.phase == TouchPhase.Moved )
+					_spriteSelected[touch.fingerId].onTouchMoved( touch, fixedTouchPosition );
 			}
-			else if( _spriteSelected[touchIndex] != null )
+			else if( _spriteSelected[touch.fingerId] != null )
 			{
-				_spriteSelected[touchIndex].onTouchEnded( fixedTouchPosition, false );
-				_spriteSelected[touchIndex] = null;
+				// If we have a button that isn't the selected button end the touch on it because we moved off of it
+				_spriteSelected[touch.fingerId].onTouchEnded( touch, fixedTouchPosition, false );
+				_spriteSelected[touch.fingerId] = null;
 			}
-			_touchUsed[touchIndex] = true;
 		}
-		else if( touchEnded && touchIndex != -1 )
+		else if( touchEnded )
 		{
 			if( button != null )
 			{
 				// If we are getting an exit over a previously selected button send it an onTouchEnded
-				if( _spriteSelected[touchIndex] != button && _spriteSelected[touchIndex] != null )
+				if( _spriteSelected[touch.fingerId] != button && _spriteSelected[touch.fingerId] != null )
 				{
-					_spriteSelected[touchIndex].onTouchEnded( fixedTouchPosition, false );
-					_spriteSelected[touchIndex] = null;
+					_spriteSelected[touch.fingerId].onTouchEnded( touch, fixedTouchPosition, false );
+				}
+				else if( _spriteSelected[touch.fingerId] == button )
+				{
+					_spriteSelected[touch.fingerId].onTouchEnded( touch, fixedTouchPosition, true );
 				}
 				
-				button.onTouchEnded( fixedTouchPosition, true );
+				// Deselect the touched sprite
+				_spriteSelected[touch.fingerId] = null;
 			}
-			_touchUsed[touchIndex] = true;
 		}
-	}
-	
-	
-	// Removes a touch from internal arrays
-	private void removeTouch( int touchIndex )
-	{
-		--_numTouches;
-		for( int i = touchIndex; i < _numTouches; ++i )
-		{
-			_spriteSelected[i] = _spriteSelected[i + 1];
-			_touchIds[i] = _touchIds[i + 1];
-		}
-		_spriteSelected[_numTouches] = null;
-	}
-	
-	
-	// Extracts the index of touchId in the _touchId's array
-	private int getTouchIndex( int touchId )
-	{
-		for( int i = 0; i < _numTouches; ++i )
-		{
-			if( _touchIds[i] == touchId )
-				return i;
-		}
-		
-		return -1;
 	}
 	
 	
@@ -273,10 +207,10 @@ public class GUISpriteUI : GUISpriteManager
 	private GUITouchableSprite getButtonForScreenPosition( Vector2 touchPosition )
 	{
 		// Run through our touchables in order.  They are sorted by z-index already.
-		for( int i = 0, totalTouchables = _touchables.items.Length; i < totalTouchables; i++ )
+		for( int i = 0, totalTouchables = _touchableSprites.Count; i < totalTouchables; i++ )
 		{
-			if( !_touchables.items[i].hidden && _touchables.items[i].hitTest( touchPosition ) )
-				return _touchables.items[i];
+			if( !_touchableSprites[i].hidden && _touchableSprites[i].hitTest( touchPosition ) )
+				return _touchableSprites[i];
 		}
 		
 		return null;

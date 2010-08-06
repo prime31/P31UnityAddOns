@@ -3,11 +3,18 @@ using System.Collections;
 
 public class MyGuiSampleManager : MonoBehaviour
 {
+	public GUIText swipeText;
+	
+	void Awake()
+	{
+	   useGUILayout = false;
+	}
 
 	void Start()
 	{
 		// Save the texture size locally for easy access
 		Vector2 textureSize = GUISpriteUI.instance.textureSize;
+		
 		
 		// IMPORTANT: depth is 1 on top higher numbers on the bottom.  This means the lower the number is the closer it gets to the camera.
 		GUISpriteButton playButton = GUISpriteUI.instance.addSpriteButton( new Rect( 10, 10, 108, 37 ), 3, new UVRect( 0, 0, 108, 37, textureSize ) ) as GUISpriteButton;
@@ -72,12 +79,19 @@ public class MyGuiSampleManager : MonoBehaviour
 		progressBar.resizeTextureOnChange = true;
 		GUISpriteUI.instance.addSprite( progressBar );
 		progressBar.value = 0.0f;
-
 		
+
 		// Test movement
 		StartCoroutine( marqueePlayButton( playButton ) );
 		StartCoroutine( animateProgressBar( progressBar ) );
 		StartCoroutine( pulseOptionButton( optionsButton ) );
+		
+		
+		
+		// Swipe detector view - big, giant touchbleSprite behind all others
+		GUISwipeDetector detector = new GUISwipeDetector( new Rect( 0, 60f, Screen.width, Screen.height - 60f ), 10, new UVRect( 450, 50, 408, 306, textureSize ) );
+		detector.action = onSwipe;
+		GUISpriteUI.instance.addTouchableSprite( detector );
 	}
 	
 	
@@ -90,7 +104,7 @@ public class MyGuiSampleManager : MonoBehaviour
 		{
 			// Make sure we arent off the right side of the screen
 			Vector3 pos = playButton.clientTransform.position;
-			if( pos.x > 480 + playButton.width / 2 )
+			if( pos.x > Screen.width + playButton.width / 2 )
 			{
 				pos.x = -playButton.width / 2;
 				playButton.clientTransform.position = pos;
@@ -187,6 +201,12 @@ public class MyGuiSampleManager : MonoBehaviour
 
 	
 	#region Callbacks
+	
+	// Swipe callback
+	public void onSwipe( GUISwipeDetector sender, SwipeDirection direction )
+	{
+		swipeText.text = direction.ToString();
+	}
 	
 	// Button callback
 	public void onTouchUpInsideScoresButton( GUISpriteButton sender )

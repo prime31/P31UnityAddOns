@@ -97,7 +97,7 @@ public class GUISlider : GUITouchableSprite
 
 
 	// Touch handlers.  Subclasses should override to get their specific behaviour
-	public override void onTouchBegan( Vector2 touchPos )
+	public override void onTouchBegan( Touch touch, Vector2 touchPos )
 	{
 		highlighted = true;
 
@@ -105,13 +105,13 @@ public class GUISlider : GUITouchableSprite
 	}
 
 	
-	public override void onTouchMoved( Vector2 touchPos )
+	public override void onTouchMoved( Touch touch, Vector2 touchPos )
 	{
 		this.updateSliderKnobForTouchPosition( touchPos );
 	}
 	
 	
-	public override void onTouchEnded( Vector2 touchPos, bool touchWasInsideTouchFrame )
+	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
 	{
 		if( touchCount == 0 )
 			highlighted = false;
