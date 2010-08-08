@@ -138,4 +138,13 @@ void UnityPause( bool pause );
 }
 
 
+- (void)pauseUnity:(BOOL)shouldPause
+{
+	if( shouldPause )
+		UnityPause( true );
+	else
+		UnityPause( false );
+}
+
+
 @end

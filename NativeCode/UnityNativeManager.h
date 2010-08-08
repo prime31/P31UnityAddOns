@@ -1,10 +1,18 @@
-//
-//  UnityNativeManager.h
-//  Unity-iPhone
-//
-//  Created by Mike on 8/7/10.
-//  Copyright 2010 Prime31 Studios. All rights reserved.
-//
+/*
+
+Calling back to Unity can be done from Objective-C with the following method:
+ 
+UnitySendMessage( "UnityGameController", "someMethodName", [@"argument string" UTF8String] );
+
+NOTE:
+ - the first argument is the object name you are sending a message to.  The GameObject name must be the same as the string
+
+ If you are going to call into Unity and it is already paused but the method will be loading a level (async or not)
+ be sure to unpause the game first:
+ 
+ UnityPause( false );
+ UnitySendMessage( "UnityGameController", "loadScene", [@"PartialScene" UTF8String] );
+*/
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
@@ -35,5 +43,7 @@
 
 // Hides the native UI and returns control to Unity
 - (void)hideViewControllerAndRestartUnity;
+
+- (void)pauseUnity:(BOOL)shouldPause;
 
 @end
