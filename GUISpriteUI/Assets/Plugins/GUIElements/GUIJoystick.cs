@@ -25,23 +25,26 @@ struct GUIBoundary
 
 public class GUIJoystick : GUITouchableSprite
 {
-	public Vector2 position;
+	public Vector2 position; // x and y offset of the joystick always between 1 and -1
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
 	public bool normalize; // Normalize output after the dead-zone?
 	
 	private UVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
 	public UVRect highlightedUVframe = UVRect.zero; // Highlighted UV's for the joystick
 	
-	private GUISprite _joystickSprite;
+	private GUISprite _joystickSprite; // sprite to use for the joystick.  Automatically added to the GUISpriteUI.
 	private Vector3 _joystickOffset;
 	private GUIBoundary _joystickBoundary;
 	private float _maxJoystickMovement = 50.0f; // max distance from _joystickOffset that the joystick will move
 	
 	
+	// frame - the screen area that you want to listen to touches in
+	// uvFrame - set to UVRect.zero unless you want a portion of the texture mapped to the entire touch area
+	// joystickOffset - the offset from the top-left point in the frame (local coordinates) to the center of the joystick
 	public GUIJoystick( Rect frame, int depth, UVRect uvFrame, GUISprite joystickSprite, Vector2 joystickOffset ):base( frame, depth, uvFrame )
 	{
 		// Add the joystickSprite to the manager
-		GUISpriteUI.instance.addSprite( joystickSprite );
+		manager.addSprite( joystickSprite );
 		
 		// Save out the uvFrame for the sprite so we can highlight
 		_normalUVframe = joystickSprite.uvFrame;
@@ -57,6 +60,13 @@ public class GUIJoystick : GUITouchableSprite
 		this.maxJoystickMovement = _maxJoystickMovement;
 		
 		resetJoystick();
+	}
+	
+	
+	// constructor that sets common defaults and calls the default constructor
+	public GUIJoystick( Rect frame, GUISprite joystickSprite, Vector2 joystickOffset ):this( frame, 1, UVFrame.zero, joystickSprite, joystickOffset )
+	{
+		
 	}
 	
 	
