@@ -12,8 +12,11 @@ public class GUISwipeDetector : GUITouchableSprite
 	public float timeToSwipe = 0.5f;	
 	public float allowedVariance = 35.0f;
 	public float minimumDistance = 40.0f;
-	public SwipeDirection swipesToDetect = SwipeDirection.All;
+	public SwipeDirection swipesToDetect = SwipeDirection.Left;  // listens to left swipes only be default
 
+
+	// frame is the screen area that you want to listen to swipes in and depth should typically be 1 or close to it
+	// so that other GUITouchableSprite's dont steal touches from the swipe detector
 	public GUISwipeDetector( Rect frame, int depth, UVRect uvFrame ):base( frame, depth, uvFrame )
 	{
 		touchInfoArray = new TouchInfo[5];
@@ -38,13 +41,6 @@ public class GUISwipeDetector : GUITouchableSprite
 			action( this, touchInfoArray[touch.fingerId].completedSwipeDirection );
 			touchInfoArray[touch.fingerId].swipeDetectionStatus = SwipeDetectionStatus.Done;
 		}
-	}
-	
-	
-	public override void onTouchEnded( Touch touch, Vector2 touchPos, bool touchWasInsideTouchFrame )
-	{
-		//Debug.Log( "TOUCH ENDED" );
-		//Debug.Log( string.Format( "x: {0}, y: {1}", touch.position.x, touch.position.y ) );
 	}
 	
 	
