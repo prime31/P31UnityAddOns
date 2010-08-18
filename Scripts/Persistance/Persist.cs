@@ -61,23 +61,10 @@ public static class Persist
 	
     public static string pathForDocumentsFile( string filename ) 
     {
-		// TODO: Switch to using:
-		//		Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/image.png";
-		
-        // Application.dataPath returns
-        // /var/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/myappname.app/Data
-#if !UNITY_IPHONE 
-		string path = Path.Combine( Application.dataPath, "Documents" );
-		Debug.Log( path );
-#else
-        string path = Application.dataPath.Substring( 0, Application.dataPath.Length - 5 );
-#endif
-		
-        // Strip application name 
-        path = path.Substring( 0, path.LastIndexOf( '/' ) );
-		
-        return Path.Combine( Path.Combine( path, "Documents" ), filename );
-    }
+		// this will drop the files in the Assets/Documents directory for the editor. Be sure to create the directory first!
+		string basePath = ( Application.isEditor ) ? Application.dataPath : Environment.GetFolderPath( Environment.SpecialFolder.Personal );
 
+        return Path.Combine( Path.Combine( basePath, "Documents" ), filename );
+    }
 
 }
