@@ -99,6 +99,12 @@ void UnityPause( bool pause );
 	_navigationControler.navigationBarHidden = YES;
 	_navigationControler.view.backgroundColor = [UIColor orangeColor];
 	
+	// If we are landscape, manually rotate our view
+	if( [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft )
+		controller.view.transform = CGAffineTransformMakeRotation( -1.5708 );
+	else if( [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight )
+		controller.view.transform = CGAffineTransformMakeRotation( 1.5708 );
+	
 	UIWindow *window = [UIApplication sharedApplication].keyWindow;
 	
 	// Set up the fade-in animation
