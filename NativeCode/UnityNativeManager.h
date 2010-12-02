@@ -27,7 +27,7 @@ NOTE:
 	CFTimeInterval _animationDuration;
 }
 @property (nonatomic, retain) UINavigationController *navigationControler;
-@property (nonatomic, retain) NSString *animationType; // kCATransitionFade, kCATransitionMoveIn, kCATransitionPush, kCATransitionMoveIn
+@property (nonatomic, retain) NSString *animationType; // kCATransitionFade, kCATransitionMoveIn, kCATransitionPush
 @property (nonatomic, retain) NSString *animationSubtype; // kCATransitionFromRight, kCATransitionFromLeft, kCATransitionFromTop, kCATransitionFromBottom
 @property (nonatomic, retain) CAMediaTimingFunction *animationTimingFunction;
 @property (nonatomic, assign) CFTimeInterval animationDuration;
