@@ -1,22 +1,21 @@
 // Here is a small example shader that adds a texture to whatever is on the screen already:
-
-Shader "iPhone/MY/Simple Additive"
+Shader "iOS/Simple Additive"
 {
-    Properties
+	Properties
 	{
-        _MainTex ("Texture to blend", 2D) = "black" {}
-    }
-    
-    SubShader
+		_MainTex("Texture to blend", 2D) = "black" {}
+	}
+
+	SubShader
 	{
-        Blend One One
-		
+		Blend One One
+
 		Pass
 		{
-	        SetTexture [_MainTex]
-	        {
-	        	combine texture
-	        }
+			SetTexture[_MainTex]
+			{
+				combine texture
+			}
 		}
-    }
+	}
 }

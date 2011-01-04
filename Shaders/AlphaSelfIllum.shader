@@ -1,34 +1,37 @@
 // Unlit with a forward offset to help with sorting issues
-Shader "Unlit/AlphaSelfIllum"
+Shader "iOS/Unlit/Alpha Self Illum"
 {
-    Properties
+	Properties
 	{
-        _Color ("Color Tint", Color) = (1,1,1,1)
-        _MainTex ("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
-    }
+		_Color("Color Tint", Color) = (1, 1, 1, 1)
+		_MainTex("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
+	}
 
-    Category
+	Category
 	{
-       Lighting On
-       ZWrite Off
-       Cull Back
-       Offset -1, -1
-       Blend SrcAlpha OneMinusSrcAlpha
-       Tags { "Queue" = "transparent" }
-       SubShader
+		Lighting Off
+		ZWrite Off
+		Cull Back
+		Offset - 1, -1
+		Blend SrcAlpha OneMinusSrcAlpha
+		
+		Tags
 		{
-            Material
+			"Queue" = "transparent"
+		}
+		SubShader
+		{
+			Material
 			{
-               Emission [_Color]
-            } // end Material
-
-            Pass
+				Emission[_Color]
+			} // end Material
+			Pass
 			{
-               SetTexture [_MainTex]
+				SetTexture[_MainTex]
 				{
-                      Combine Texture * Primary, Texture * Primary
-                } // end SetTexture
-            } // end Pass
-        } // end SubShader
-    } // end Category
+					Combine Texture * Primary, Texture * Primary
+				} // end SetTexture
+			} // end Pass
+		} // end SubShader
+	} // end Category
 }

@@ -1,10 +1,15 @@
-Shader "iPhone/reflective"
+Shader "iOS/iPhone/reflective"
 {
 	Properties
 	{
-		_Color ("Main Color", Color) = (1,1,1,1)
-		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_Reflect ("Reflection", 2D) = "black" { TexGen SphereMap }
+		_Color("Main Color", Color) = (1, 1, 1, 1)
+		_MainTex("Base (RGB)", 2D) = "white"
+		{
+		}
+		_Reflect("Reflection", 2D) = "black"
+		{
+			TexGen SphereMap
+		}
 	}
 
 	SubShader
@@ -22,11 +27,11 @@ Shader "iPhone/reflective"
 				Bind "texcoord", texcoord0 // main uses 1st uv
 			}
 
-			SetTexture [_MainTex]
+			SetTexture[_MainTex]
 			{
 				combine texture
 			}
-			SetTexture [_Reflect]
+			SetTexture[_Reflect]
 			{
 				combine texture, previous
 			}

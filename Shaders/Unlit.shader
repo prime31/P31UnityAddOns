@@ -1,10 +1,9 @@
 // Unlit (The ultimate no frills shader)
-
-Shader "Unlit/Unlit"
+Shader "iOS/Unlit/Unlit Texture Only (FAST)"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = ""
+		_MainTex("Texture", 2D) = ""
 	}
 
 	SubShader

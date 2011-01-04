@@ -1,33 +1,36 @@
 // Unlit with Alpha, double-sided
-Shader "Unlit/AlphaSelfIllumDoubleSided"
+Shader "iOS/Unlit/Alpha Self Illum Double Sided"
 {
-    Properties
+	Properties
 	{
-        _Color ("Color Tint", Color) = (1,1,1,1)
-        _MainTex ("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
-    }
+		_Color("Color Tint", Color) = (1, 1, 1, 1)
+		_MainTex("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
+	}
 
-    Category
+	Category
 	{
-       Lighting On
-       ZWrite Off
-       Cull Off
-       Blend SrcAlpha OneMinusSrcAlpha
-       Tags { "Queue" = "transparent" }
-       SubShader
+		Lighting Off
+		ZWrite Off
+		Cull Off
+		Blend SrcAlpha OneMinusSrcAlpha
+		
+		Tags
 		{
-            Material
+			"Queue" = "transparent"
+		}
+		SubShader
+		{
+			Material
 			{
-               Emission [_Color]
-            } // End Material
-
-            Pass
+				Emission[_Color]
+			} // End Material
+			Pass
 			{
-               SetTexture [_MainTex]
+				SetTexture[_MainTex]
 				{
-                      Combine Texture * Primary, Texture * Primary
-                } // end SetTexture
-            } // end Pass
-        } // end SubShader
-    } // end Category
+					Combine Texture * Primary, Texture * Primary
+				} // end SetTexture
+			} // end Pass
+		} // end SubShader
+	} // end Category
 }

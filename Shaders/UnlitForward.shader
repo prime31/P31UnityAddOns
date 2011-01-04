@@ -1,28 +1,29 @@
 // Unlit with a forward offset to help with sorting issues
-Shader "Unlit/UnlitForward"
+Shader "iOS/Unlit/Unlit Forward"
 {
-    Properties
+	Properties
 	{
-        _Color ("Main Color", Color) = (1,1,1,1)
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-    }
+		_Color("Main Color", Color) = (1, 1, 1, 1)
+		_MainTex("Base (RGB)", 2D) = "white" {}
+	}
 
-    Category
+	Category
 	{
-       Lighting Off
-       ZWrite On
-       Cull Back
-       Offset -1, -1
-       SubShader
+		Lighting Off
+		ZWrite On
+		Cull Back
+		Offset - 1, -1
+		
+		SubShader
 		{
-            Pass
+			Pass
 			{
-               SetTexture [_MainTex]
+				SetTexture[_MainTex]
 				{
-                    constantColor [_Color]
-                    Combine texture * constant, texture * constant 
-                 } // end SetTexture
-            } // end Pass
-        } // end SubShader
-    } // end Category
+					constantColor[_Color]
+					Combine texture * constant, texture * constant
+				} // end SetTexture
+			} // end Pass
+		} // end SubShader
+	} // end Category
 }

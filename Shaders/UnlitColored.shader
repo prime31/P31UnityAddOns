@@ -1,27 +1,28 @@
 // Unlit with a color picker
-Shader "Unlit/UnlitColored"
+Shader "iOS/Unlit/Unlit Colored"
 {
-    Properties
+	Properties
 	{
-        _Color ("Main Color", Color) = (1,1,1,1)
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-    }
+		_Color("Main Color", Color) = (1, 1, 1, 1)
+		_MainTex("Base (RGB)", 2D) = "white" {}
+	}
 
-    Category
+	Category
 	{
-       Lighting Off
-       ZWrite On
-       Cull Back
-       SubShader
+		Lighting Off
+		ZWrite On
+		Cull Back
+		
+		SubShader
 		{
-            Pass
+			Pass
 			{
-               SetTexture [_MainTex]
+				SetTexture[_MainTex]
 				{
-                    constantColor [_Color]
-                    Combine texture * constant, texture * constant 
-                 } // end SetTexture
-            } // end Pass
-        } // end SubShader
-    } // end Category
+					constantColor[_Color]
+					Combine texture * constant, texture * constant
+				} // end SetTexture
+			} // end Pass
+		} // end SubShader
+	} // end Category
 }
