@@ -21,8 +21,8 @@ Shader "iOS/Unlit/Unlit Colored"
 				{
 					constantColor[_Color]
 					Combine texture * constant, texture * constant
-				} // end SetTexture
-			} // end Pass
+				}
+			}
 		} // end SubShader
 	} // end Category
 }

@@ -1,4 +1,4 @@
-Shader "iOS/iPhone/reflective"
+Shader "iOS/reflective"
 {
 	Properties
 	{
