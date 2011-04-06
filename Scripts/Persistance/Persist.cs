@@ -63,8 +63,11 @@ public static class Persist
     {
 		// this will drop the files in the Assets/Documents directory for the editor. Be sure to create the directory first!
 		string basePath = ( Application.isEditor ) ? Application.dataPath : Environment.GetFolderPath( Environment.SpecialFolder.Personal );
-
-        return Path.Combine( Path.Combine( basePath, "Documents" ), filename );
+		
+		if( Application.isEditor )
+			basePath = Path.Combine( basePath, "Documents" );
+			
+        return Path.Combine( basePath, filename );
     }
 
 }
