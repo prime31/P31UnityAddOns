@@ -21,9 +21,9 @@ public class UISpriteManager : MonoBehaviour
 	    CW      		// Clockwise
 	};
 	
-	public bool autoTextureSelection = false;  // if set to true, the texture will be chosen and loaded from textureName
-	public string textureName;	// the base texture to use. If retina, textureName2x will be loaded.  Both need to be in Resources.
-	public bool isRetina = false;
+	public bool autoTextureSelectionForHD = false;  // if set to true, the texture will be chosen and loaded from textureName
+	public string textureName;	// the base texture to use. If HD/retina, textureName2x will be loaded.  Both need to be in Resources.
+	public bool isHD = false;
 	
 	public Material material;            // The material to use for the sprites
 	public int startSpriteCount = 10;        // How many sprites to allocate space for
@@ -72,13 +72,17 @@ public class UISpriteManager : MonoBehaviour
         transform.rotation = Quaternion.identity;
 		
 		// handle texture loading if required
-		if( autoTextureSelection )
+		if( autoTextureSelectionForHD )
 		{
 			// are we laoding up a 2x texture?
+#if UNITY_EDITOR
+			if( Screen.width >= 500 || Screen.height >= 500 ) // for easier testing in the editor
+#else
 			if( Screen.width >= 960 || Screen.height >= 960 )
+#endif
 			{
 				textureName = textureName + "2x";
-				isRetina = true;
+				isHD = true;
 			}
 			
 			var texture = (Texture)Resources.Load( textureName, typeof( Texture ) );
@@ -279,7 +283,7 @@ public class UISpriteManager : MonoBehaviour
 	#region Add/Remove sprite functions
 	
 	// Shortcut for adding a new sprite
-    public UISprite addSprite( Rect frame, UVRect uvFrame, int depth )
+    public UISprite addSprite( Rect frame, UIUVRect uvFrame, int depth )
     {
         // Create and initialize the new sprite
 		UISprite newSprite = new UISprite( frame, depth, uvFrame );
@@ -370,7 +374,7 @@ public class UISpriteManager : MonoBehaviour
         sprite.___hidden = false;
 
         // Update the vertices.  This will end up caling UpdatePositions() to set the vertsChanged flag
-        sprite.transform();
+        sprite.updateTransform();
     }
 
 	#endregion;

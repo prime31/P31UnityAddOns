@@ -3,6 +3,10 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
+public enum UIxRelativeTo { Left, Right };
+public enum UIyRelativeTo { Top, Bottom };
+
+
 public class UI : UISpriteManager
 {
 	// All access should go through instance
@@ -96,13 +100,14 @@ public class UI : UISpriteManager
 	   instance = null;
 	}
 
+
 	#endregion;
 
 
-	#region Add Element and Button functions
+	#region Add/Remove Element and Button functions
 	
 	// Shortcut for adding a GUISpriteButton
-	public UISpriteButton addSpriteButton( Rect frame, int depth, UVRect uvFrame )
+	public UISpriteButton addSpriteButton( Rect frame, int depth, UIUVRect uvFrame )
 	{
 		UISpriteButton spriteButton = new UISpriteButton( frame, depth, uvFrame );
 		addTouchableSprite( spriteButton );
@@ -120,8 +125,6 @@ public class UI : UISpriteManager
 		_touchableSprites.Sort();
 	}
 	
-	#endregion;
-	
 	
 	// Removes a sprite or touchableSprite
 	public void removeElement( UISprite sprite )
@@ -132,6 +135,8 @@ public class UI : UISpriteManager
 
 		removeSprite( sprite );
 	}
+
+	#endregion;
 
 	
 	#region Touch management and analysis helpers
@@ -208,95 +213,24 @@ public class UI : UISpriteManager
 	}
 
 	#endregion;
-
-
-	#region Animations
-
-	// Float version (for alpha)
-	public UIAnimation to( UISprite sprite, float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
+	
+	
+	// helper function to create a vector from relative verbage. the x and y values should be between 0 and 1
+	public static Vector2 relativeVec2( float xPercent, UIxRelativeTo xRelative, float yPercent, UIyRelativeTo yRelative )
 	{
-		return animate( true, sprite, duration, aniProperty, target, ease, easeType );
+		var vec = Vector2.zero;
+		
+		if( xRelative == UIxRelativeTo.Left )
+			vec.x = xPercent * Screen.width;
+		else
+			vec.x = Screen.width - ( xPercent * Screen.width );
+		
+		if( yRelative == UIyRelativeTo.Top )
+			vec.y = yPercent * Screen.height;
+		else
+			vec.y = Screen.height - ( yPercent * Screen.height );
+		
+		return vec;
 	}
 	
-	
-	// Vector3 version
-	public UIAnimation to( UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
-	{
-		return animate( true, sprite, duration, aniProperty, target, ease, easeType );
-	}
-
-	
-	// float version
-	public UIAnimation from( UISprite sprite, float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
-	{
-		return animate( false, sprite, duration, aniProperty, target, ease, easeType );
-	}
-	
-
-	// Vector3 version
-	public UIAnimation from( UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
-	{
-		return animate( false, sprite, duration, aniProperty, target, ease, easeType );
-	}
-
-	
-	// Sets up and starts a new animation in a CoRoutine - float version
-	private UIAnimation animate( bool animateTo, UISprite sprite, float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
-	{
-		float current = 0.0f;
-		
-		// Grab the current value
-		switch( aniProperty )
-		{
-			case UIAnimationProperty.Alpha:
-				current = sprite.color.a;
-				break;
-		}
-
-		float start = ( animateTo ) ? current : target;
-
-		// If we are doing a 'from', the target is our current position
-		if( !animateTo )
-			target = current;
-		
-		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease, easeType );
-		StartCoroutine( ani.animate() );
-		
-		return ani;
-	}
-	
-
-	// Sets up and starts a new animation in a CoRoutine - Vector3 version
-	private UIAnimation animate( bool animateTo, UISprite sprite, float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
-	{
-		Vector3 current = Vector3.zero;
-		
-		// Grab the current value
-		switch( aniProperty )
-		{
-			case UIAnimationProperty.Position:
-				current = sprite.clientTransform.position;
-				break;
-			case UIAnimationProperty.LocalScale:
-				current = sprite.clientTransform.localScale;
-				break;
-			case UIAnimationProperty.EulerAngles:
-				current = sprite.clientTransform.eulerAngles;
-				break;
-		}
-		
-		Vector3 start = ( animateTo ) ? current : target;
-		
-		// If we are doing a 'from', the target is our current position
-		if( !animateTo )
-			target = current;
-		
-		UIAnimation ani = new UIAnimation( sprite, duration, aniProperty, start, target, ease, easeType );
-		StartCoroutine( ani.animate() );
-		
-		return ani;
-	}
-	
-	#endregion;
-
 }

@@ -14,7 +14,7 @@ public class TextManager : MonoBehaviour
 	{
 		var text = new UIText( "prototype", new Vector2( 0f, 0f ) );
 		
-		var vec1 = new Vector2( 10, 10 );
+		var vec1 = UI.relativeVec2( .3f, UIxRelativeTo.Right, .1f, UIyRelativeTo.Top );
 		var vec2 = new Vector2( 10, 180 );
 		var vec3 = new Vector2( 10, 220 );
 		var vec4 = new Vector2( 100, 150 );
@@ -32,7 +32,7 @@ public class TextManager : MonoBehaviour
 	// Update is called once per frame
 	IEnumerator waitThenRemoveText()
 	{
-		yield return new WaitForSeconds( 1.0f );
+		yield return new WaitForSeconds( 2.0f );
 		text1.clear();
 		
 		yield return new WaitForSeconds( 1.0f );

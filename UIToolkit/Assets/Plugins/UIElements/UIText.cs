@@ -98,7 +98,7 @@ public class UIText : System.Object
 	private void loadConfigfile( string fileName )
 	{
 		// should we load a double resolution font?
-		if( UI.instance.autoTextureSelection && UI.instance.isRetina )
+		if( UI.instance.autoTextureSelectionForHD && UI.instance.isHD )
 			fileName = fileName + "2x";
 
 		if( !fileName.EndsWith( ".fnt" ) )
@@ -180,20 +180,19 @@ public class UIText : System.Object
 			} // end foreach
 		} // end while
 	}
-	 
+	
 	
 	// draw text on screen, create each quad and send it to the manager
 	private int drawText( string text, Vector2 position, float scale, int depth, Color color )
 	{		
 		float dx = position.x;
 		float dy = 0;
-		float widetext;
+		float textWidth;
 		float offsetY;
 		
-		int fontlineskip = 0;
+		int fontLineSkip = 0;
 			
-		int charID = 0;
-		int counter = 0;
+		int charId = 0;
 		
 		UISprite[] sprites = null;
 		
@@ -201,40 +200,37 @@ public class UIText : System.Object
 		sprites = new UISprite[length];
 		
 		
-		System.CharEnumerator charEnum = text.GetEnumerator();
-	    while( charEnum.MoveNext() )
+		for( var i = 0; i < text.Length; i++ )
 	    {
-			charID = System.Convert.ToInt32( text[counter] );
+	    	charId = System.Convert.ToInt32( text[i] );
 			
 			// "10" is the new line char
-			if( charID == 10 )
+			if( charId == 10 )
 			{
 				// calculate the size to center text on Y axis, based on its scale
 				// 77 is the "M" char usually big enough to get a proper spaced
 				// lineskip, use any other char if you want
-				fontlineskip += (int)( arrayFonts[77].h * scale );
+				fontLineSkip += (int)( arrayFonts[77].h * scale );
 				dx =  position.x;
 			}
 			else
 			{
 				// calculate the size to center text on Y axis, based on its scale
-				offsetY = arrayFonts[charID].offsety * scale;
-				dy =  position.y + offsetY + fontlineskip;
+				offsetY = arrayFonts[charId].offsety * scale;
+				dy =  position.y + offsetY + fontLineSkip;
 			}
 
 			// add quads for each char
-			var uvRect = new UVRect( (int)textureOffset.x + arrayFonts[charID].posX, (int)textureOffset.y + arrayFonts[charID].posY, arrayFonts[charID].w, arrayFonts[charID].h );
-			sprites[counter] = new UISprite( new Rect( dx, dy, arrayFonts[charID].w * scale, arrayFonts[charID].h * scale ), depth, uvRect, false );
-			UI.instance.addSprite( sprites[counter] );
-			sprites[counter].color = color;
+			var uvRect = new UIUVRect( (int)textureOffset.x + arrayFonts[charId].posX, (int)textureOffset.y + arrayFonts[charId].posY, arrayFonts[charId].w, arrayFonts[charId].h );
+			sprites[i] = new UISprite( new Rect( dx, dy, arrayFonts[charId].w * scale, arrayFonts[charId].h * scale ), depth, uvRect, false );
+			UI.instance.addSprite( sprites[i] );
+			sprites[i].color = color;
 
 			// calculate the size to advance, based on its scale
-			widetext = arrayFonts[charID].xadvance * scale;
+			textWidth = arrayFonts[charId].xadvance * scale;
 		
 			// advance the position to draw the next letter
-			dx += widetext + arrayFonts[charID].offsetx;
-
-			counter++;	
+			dx += textWidth + arrayFonts[charId].offsetx;
 		}
 		
 		// add all sprites at once to the array, we use this later to delete the strings
@@ -243,6 +239,52 @@ public class UIText : System.Object
 		return textSprites.Count - 1;
 	}
 	
+	
+	public Vector2 sizeForText( string text, float scale = 1.0f )
+	{
+		float dx = 0;
+		float dxMax = 0;
+		float dy = 0;
+		float textWidth;
+		float offsetY;
+		int fontLineSkip = 0;
+		int charId = 0;
+		
+		
+		for( var i = 0; i < text.Length; i++ )
+	    {
+	    	charId = System.Convert.ToInt32( text[i] );
+			
+			// "10" is the new line char
+			if( charId == 10 )
+			{
+				// calculate the size to center text on Y axis, based on its scale
+				// 77 is the "M" char usually big enough to get a proper spaced
+				// lineskip, use any other char if you want
+				fontLineSkip += (int)( arrayFonts[77].h * scale );
+				
+				// we want the longest line
+				if( dxMax < dx )
+					dxMax = dx;
+				dx =  0;
+			}
+			else
+			{
+				// calculate the size to center text on Y axis, based on its scale
+				offsetY = arrayFonts[charId].offsety * scale;
+				dy =  0 + offsetY + fontLineSkip;
+			}
+
+			// calculate the size to advance, based on its scale
+			textWidth = arrayFonts[charId].xadvance * scale;
+		
+			// advance the position to draw the next letter
+			dx += textWidth + arrayFonts[charId].offsetx;
+		}
+		
+		return new Vector2( dxMax > 0 ? dxMax : dx, dy + ( arrayFonts[77].h * scale ) );
+	}
+
 	
 	// this will create a new UITextInstance and draw the text
 	public UITextInstance addTextInstance( string text, Vector2 position )

@@ -29,8 +29,8 @@ public class UIJoystick : UITouchableSprite
 	public Vector2 deadZone = Vector2.zero; // Controls when position output occurs
 	public bool normalize; // Normalize output after the dead-zone?
 	
-	private UVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
-	public UVRect highlightedUVframe = UVRect.zero; // Highlighted UV's for the joystick
+	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
+	public UIUVRect highlightedUVframe = UIUVRect.zero; // Highlighted UV's for the joystick
 	
 	private UISprite _joystickSprite;
 	private Vector3 _joystickOffset;
@@ -38,7 +38,7 @@ public class UIJoystick : UITouchableSprite
 	private float _maxJoystickMovement = 50.0f; // max distance from _joystickOffset that the joystick will move
 	
 	
-	public UIJoystick( Rect frame, int depth, UVRect uvFrame, UISprite joystickSprite, Vector2 joystickOffset ):base( frame, depth, uvFrame )
+	public UIJoystick( Rect frame, int depth, UIUVRect uvFrame, UISprite joystickSprite, Vector2 joystickOffset ):base( frame, depth, uvFrame )
 	{
 		// Add the joystickSprite to the manager
 		UI.instance.addSprite( joystickSprite );
@@ -71,13 +71,13 @@ public class UIJoystick : UITouchableSprite
 	}
 	
 	
-	public void addBackgroundSprite( Rect frame, int depth, UVRect uvFrame )
+	public void addBackgroundSprite( Rect frame, int depth, UIUVRect uvFrame )
 	{
 		UISprite sprite = new UISprite( frame, depth, uvFrame, true );
 		sprite.clientTransform.parent = this.clientTransform;
 		UI.instance.addSprite( sprite );
 		sprite.clientTransform.localPosition = new Vector3( _joystickOffset.x, _joystickOffset.y, depth );
-		sprite.transform();
+		sprite.updateTransform();
 	}
 	
 	
@@ -85,11 +85,11 @@ public class UIJoystick : UITouchableSprite
 	private void resetJoystick()
 	{
 		_joystickSprite.clientTransform.localPosition = _joystickOffset;
-		_joystickSprite.transform();
+		_joystickSprite.updateTransform();
 		position.x = position.y = 0.0f;
 		
 		// If we have a highlightedUVframe, swap the original back in
-		if( highlightedUVframe != UVRect.zero )
+		if( highlightedUVframe != UIUVRect.zero )
 			_joystickSprite.uvFrame = _normalUVframe;
 	}
 	
@@ -103,7 +103,7 @@ public class UIJoystick : UITouchableSprite
 		
 		// Set the new position and update the transform		
 		_joystickSprite.clientTransform.localPosition = newPosition;
-		_joystickSprite.transform();
+		_joystickSprite.updateTransform();
 		
 		// Get a value between -1 and 1 for position
 		position.x = ( newPosition.x - _joystickOffset.x ) / _maxJoystickMovement;
@@ -144,7 +144,7 @@ public class UIJoystick : UITouchableSprite
 		this.layoutJoystick( this.inverseTranformPoint( touchPos ) );
 		
 		// If we have a highlightedUVframe, swap it in
-		if( highlightedUVframe != UVRect.zero )
+		if( highlightedUVframe != UIUVRect.zero )
 			_joystickSprite.uvFrame = highlightedUVframe;
 	}
 	

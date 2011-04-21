@@ -97,7 +97,7 @@ public class UIAnimation
 			}
 			
 			// Commit the changes back to the main mesh
-			sprite.transform();
+			sprite.updateTransform();
 
 			// See if we are done with our animation yet
 			if( ( startTime + duration ) < Time.time )

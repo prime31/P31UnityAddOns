@@ -9,13 +9,13 @@ public class UIKnob : UITouchableSprite
 	public bool continuous = false;
 	private float _value = 0;
 
-	private UVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
-	public UVRect highlightedUVframe;
+	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
+	public UIUVRect highlightedUVframe;
 	
 	public UIKnobChanged action;
 
 	
-	public UIKnob( Rect frame, int depth, UVRect uvFrame, UIKnobChanged action ):base( frame, depth, uvFrame )
+	public UIKnob( Rect frame, int depth, UIUVRect uvFrame, UIKnobChanged action ):base( frame, depth, uvFrame )
 	{
 		// Set our origin in the center
 		this.gameObjectOriginInCenter = true;
@@ -51,7 +51,7 @@ public class UIKnob : UITouchableSprite
 
 	
 	// Sets the uvFrame of the original GUISprite and resets the _normalUVFrame for reference when highlighting
-	public override UVRect uvFrame
+	public override UIUVRect uvFrame
 	{
 		get { return _uvFrame; }
 		set
@@ -94,7 +94,7 @@ public class UIKnob : UITouchableSprite
 				
 				// Update the knob rotation
 				clientTransform.rotation = Quaternion.Euler( 0, 0, -_value * 360 );
-				transform();
+				updateTransform();
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public class UIKnob : UITouchableSprite
 		float rot = Vector3.Angle( Vector3.up, newVector ) * ( -Mathf.Sign( x ) );
 		
 		clientTransform.rotation = Quaternion.Euler( 0, 0, rot );
-		transform();
+		updateTransform();
 
 		_value = ( 360 - clientTransform.rotation.eulerAngles.z ) / 360;
 		

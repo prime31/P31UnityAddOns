@@ -16,7 +16,7 @@ public abstract class UITouchableSprite : UISprite, IComparable
 	protected bool _highlighted;
 	
 	
-	public UITouchableSprite( Rect frame, int depth, UVRect uvFrame ):base( frame, depth, uvFrame )
+	public UITouchableSprite( Rect frame, int depth, UIUVRect uvFrame ):base( frame, depth, uvFrame )
 	{
 	}
 

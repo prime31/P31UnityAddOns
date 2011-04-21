@@ -8,16 +8,16 @@ public class UIToggleButton : UITouchableSprite
 {
 	public UIToggleButtonChanged action = null; // Delegate for when we get a touchUpInside
 	
-	private UVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
-	public UVRect highlightedUVframe;
-	public UVRect selectedUVframe;
+	private UIUVRect _normalUVframe; // Holds a copy of the uvFrame that the button was initialized with
+	public UIUVRect highlightedUVframe;
+	public UIUVRect selectedUVframe;
 	
 	private bool _selected;
 	
 
 	#region Constructors
 	
-	public UIToggleButton( Rect frame, int depth, UVRect uvFrame, UVRect selectedUVframe ):base( frame, depth, uvFrame )
+	public UIToggleButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe ):base( frame, depth, uvFrame )
 	{
 		this.selectedUVframe = selectedUVframe;
 		
@@ -25,12 +25,12 @@ public class UIToggleButton : UITouchableSprite
 		_normalUVframe = uvFrame;
 		
 		// If a highlighted frame has not yet been set use the normalUVframe
-		if( highlightedUVframe == UVRect.zero )
+		if( highlightedUVframe == UIUVRect.zero )
 			highlightedUVframe = uvFrame;
 	}
 
 
-	public UIToggleButton( Rect frame, int depth, UVRect uvFrame, UVRect selectedUVframe, UVRect highlightedUVframe ):this( frame, depth, uvFrame, selectedUVframe )
+	public UIToggleButton( Rect frame, int depth, UIUVRect uvFrame, UIUVRect selectedUVframe, UIUVRect highlightedUVframe ):this( frame, depth, uvFrame, selectedUVframe )
 	{
 		this.highlightedUVframe = highlightedUVframe;
 	}
@@ -39,7 +39,7 @@ public class UIToggleButton : UITouchableSprite
 	
 
 	// Sets the uvFrame of the original GUISprite and resets the _normalUVFrame for reference when highlighting
-	public override UVRect uvFrame
+	public override UIUVRect uvFrame
 	{
 		get { return _uvFrame; }
 		set
@@ -91,9 +91,9 @@ public class UIToggleButton : UITouchableSprite
 
 	
 	// Override transform() so we can mark the touchFrame as dirty
-	public override void transform()
+	public override void updateTransform()
 	{
-		base.transform();
+		base.updateTransform();
 		
 		touchFrameIsDirty = true;
 	}

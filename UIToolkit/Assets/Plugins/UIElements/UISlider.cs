@@ -17,7 +17,7 @@ public class UISlider : UITouchableSprite
 	public UISliderChanged action;
 
 
-	public UISlider( Rect frame, int depth, UVRect uvFrame, UISprite sliderKnob, UISliderLayout layout, UISliderChanged action ):base( frame, depth, uvFrame )
+	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderLayout layout, UISliderChanged action ):base( frame, depth, uvFrame )
 	{
 		this.layout = layout;
 		
@@ -41,7 +41,7 @@ public class UISlider : UITouchableSprite
 	}
 	
 	
-	public UISlider( Rect frame, int depth, UVRect uvFrame, UISprite sliderKnob, UISliderChanged action ):this( frame, depth, uvFrame, sliderKnob, UISliderLayout.Horizontal, action )
+	public UISlider( Rect frame, int depth, UIUVRect uvFrame, UISprite sliderKnob, UISliderChanged action ):this( frame, depth, uvFrame, sliderKnob, UISliderLayout.Horizontal, action )
 	{
 		
 	}
@@ -77,7 +77,7 @@ public class UISlider : UITouchableSprite
 			float newKnobPosition = Mathf.Clamp( clientTransform.position.y - normalizedKnobValue * height, _knobMinimumXY, _knobMaximumXY );
 			_sliderKnob.clientTransform.position = new Vector3( _sliderKnob.clientTransform.position.x, newKnobPosition, _sliderKnob.clientTransform.position.z );
 		}
-		_sliderKnob.transform();
+		_sliderKnob.updateTransform();
 	}
 
 	

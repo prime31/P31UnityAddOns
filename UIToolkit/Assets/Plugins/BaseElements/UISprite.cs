@@ -16,7 +16,7 @@ public class UISprite : System.Object
     public float height; // THESE ARE PUBLIC TO AVOID THE GETTER OVERHEAD
 	public bool gameObjectOriginInCenter = false;  // Set to true to get your origin in the center.  Useful for scaling/rotating
     protected GameObject client;        // Reference to the client GameObject
-	protected UVRect _uvFrame;		// UV coordinates and size for the sprite
+	protected UIUVRect _uvFrame;		// UV coordinates and size for the sprite
 	
     protected Vector3[] meshVerts;        // Pointer to the array of vertices in the mesh
     protected Vector2[] UVs;              // Pointer to the array of UVs in the mesh
@@ -31,12 +31,19 @@ public class UISprite : System.Object
     public Vector3 v3 = new Vector3();
     public Vector3 v4 = new Vector3();
 
-	// Indices of the associated vertices in the actual mesh (this just provides a quicker way for the SpriteManager to get straight to the right vertices in the vertex array)
-	// Alsow houses indices of UVs in the mesh and color values
+
+	// Indices of the associated vertices in the actual mesh (shortcut to get straight to the right vertices in the vertex array)
+	// Also houses indices of UVs in the mesh and color values
 	public UIVertexIndices vertexIndices;
+	
+	
+	public UISprite( Rect frame, int depth, UIUVRect uvFrame ):this( frame, depth, uvFrame, false )
+	{
+		
+	}
+	
 
-
-    public UISprite( Rect frame, int depth, UVRect uvFrame, bool gameObjectOriginInCenter )
+    public UISprite( Rect frame, int depth, UIUVRect uvFrame, bool gameObjectOriginInCenter )
     {
 		this.gameObjectOriginInCenter = gameObjectOriginInCenter;
 		
@@ -52,17 +59,15 @@ public class UISprite : System.Object
 		// Save these for later.  The manager will call initializeSize() when the UV's get setup
 		width = frame.width;
 		height = frame.height;
+		
+		// double up our coordinates if we are HD
+		if( UI.instance.isHD )
+			uvFrame.doubleForHD();
 		_uvFrame = uvFrame;
     }
-	
-	
-	public UISprite( Rect frame, int depth, UVRect uvFrame ):this( frame, depth, uvFrame, false )
-	{
-		
-	}
 
 
-	public virtual UVRect uvFrame
+	public virtual UIUVRect uvFrame
 	{
 		get { return _uvFrame; }
 		set
@@ -70,6 +75,10 @@ public class UISprite : System.Object
 			// Dont bother changing if the new value isn't different
 			if( _uvFrame != value )
 			{
+				// double up for HD
+				if( UI.instance.isHD )
+					value.doubleForHD();
+				
 				_uvFrame = value;
 				manager.updateUV( this );
 			}
@@ -126,7 +135,7 @@ public class UISprite : System.Object
 	        v4 = new Vector3( width, 0, 0 );    // Upper-right
 		}
 		
-        transform();
+        updateTransform();
     }
 	
 
@@ -139,7 +148,7 @@ public class UISprite : System.Object
 	
 
     // Applies the transform of the client GameObject and stores the results in the associated vertices of the overall mesh
-    public virtual void transform()
+    public virtual void updateTransform()
     {
 		meshVerts[vertexIndices.mv.one] = clientTransform.TransformPoint( v1 );
 		meshVerts[vertexIndices.mv.two] = clientTransform.TransformPoint( v2 );
@@ -160,6 +169,97 @@ public class UISprite : System.Object
 			manager.updateColors( this );
 		}
 	}
+	
+	
+	#region Animation methods
+	
+	// Float version (for alpha)
+	public UIAnimation to( float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( true, duration, aniProperty, target, ease, easeType );
+	}
+	
+	
+	// Vector3 version
+	public UIAnimation to( float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( true, duration, aniProperty, target, ease, easeType );
+	}
 
+	
+	// float version
+	public UIAnimation from( float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( false, duration, aniProperty, target, ease, easeType );
+	}
+	
+
+	// Vector3 version
+	public UIAnimation from( float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	{
+		return animate( false, duration, aniProperty, target, ease, easeType );
+	}
+	
+	
+	// Sets up and starts a new animation in a Coroutine - float version
+	private UIAnimation animate( bool animateTo, float duration, UIAnimationProperty aniProperty, float target, IEasing ease, Easing.EasingType easeType )
+	{
+		float current = 0.0f;
+		
+		// Grab the current value
+		switch( aniProperty )
+		{
+			case UIAnimationProperty.Alpha:
+				current = this.color.a;
+				break;
+		}
+
+		float start = ( animateTo ) ? current : target;
+
+		// If we are doing a 'from', the target is our current position
+		if( !animateTo )
+			target = current;
+		
+		UIAnimation ani = new UIAnimation( this, duration, aniProperty, start, target, ease, easeType );
+		UI.instance.StartCoroutine( ani.animate() );
+		
+		return ani;
+	}
+	
+
+	// Sets up and starts a new animation in a Coroutine - Vector3 version
+	private UIAnimation animate( bool animateTo, float duration, UIAnimationProperty aniProperty, Vector3 target, IEasing ease, Easing.EasingType easeType )
+	{
+		Vector3 current = Vector3.zero;
+		
+		// Grab the current value
+		switch( aniProperty )
+		{
+			case UIAnimationProperty.Position:
+				current = this.clientTransform.position;
+				break;
+			case UIAnimationProperty.LocalScale:
+				current = this.clientTransform.localScale;
+				break;
+			case UIAnimationProperty.EulerAngles:
+				current = this.clientTransform.eulerAngles;
+				break;
+		}
+		
+		Vector3 start = ( animateTo ) ? current : target;
+		
+		// If we are doing a 'from', the target is our current position
+		if( !animateTo )
+			target = current;
+		
+		UIAnimation ani = new UIAnimation( this, duration, aniProperty, start, target, ease, easeType );
+		UI.instance.StartCoroutine( ani.animate() );
+		
+		return ani;
+	}
+	
+	
+	#endregion
+	
 }
 

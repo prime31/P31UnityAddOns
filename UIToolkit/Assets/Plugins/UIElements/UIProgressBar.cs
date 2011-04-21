@@ -9,10 +9,10 @@ public class UIProgressBar : UISprite
 	private float _value = 0;
 	private UISprite _bar;
 	private float _barOriginalWidth;
-	private UVRect _barOriginalUVframe;
+	private UIUVRect _barOriginalUVframe;
 	
 	
-	public UIProgressBar( Rect frame, int depth, UVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
+	public UIProgressBar( Rect frame, int depth, UIUVRect uvFrame, UISprite bar ):base( frame, depth, uvFrame )
 	{
 		// Save the bar and make it a child of the slider for organization purposes
 		_bar = bar;
@@ -38,7 +38,7 @@ public class UIProgressBar : UISprite
 				if( resizeTextureOnChange )
 				{
 					// Set the uvFrame's width based on the value
-					UVRect newUVframe = _barOriginalUVframe;
+					UIUVRect newUVframe = _barOriginalUVframe;
 					newUVframe.uvDimensions.x *= _value;
 					_bar.uvFrame = newUVframe;
 				}
