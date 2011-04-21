@@ -97,6 +97,10 @@ public class UIText : System.Object
 	// parse the .fnt file with the font definition.  Font files should be in the Assets/StreamingAssets folder
 	private void loadConfigfile( string fileName )
 	{
+		// should we load a double resolution font?
+		if( UI.instance.autoTextureSelection && UI.instance.isRetina )
+			fileName = fileName + "2x";
+
 		if( !fileName.EndsWith( ".fnt" ) )
 			fileName = fileName + ".fnt";
 

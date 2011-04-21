@@ -21,6 +21,10 @@ public class UISpriteManager : MonoBehaviour
 	    CW      		// Clockwise
 	};
 	
+	public bool autoTextureSelection = false;  // if set to true, the texture will be chosen and loaded from textureName
+	public string textureName;	// the base texture to use. If retina, textureName2x will be loaded.  Both need to be in Resources.
+	public bool isRetina = false;
+	
 	public Material material;            // The material to use for the sprites
 	public int startSpriteCount = 10;        // How many sprites to allocate space for
 	public WINDING_ORDER winding = WINDING_ORDER.CCW; // Which way to wind polygons
@@ -66,6 +70,22 @@ public class UISpriteManager : MonoBehaviour
         // Move the object to the origin so the objects drawn will not be offset from the objects they are intended to represent.
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
+		
+		// handle texture loading if required
+		if( autoTextureSelection )
+		{
+			// are we laoding up a 2x texture?
+			if( Screen.width >= 960 || Screen.height >= 960 )
+			{
+				textureName = textureName + "2x";
+				isRetina = true;
+			}
+			
+			var texture = (Texture)Resources.Load( textureName, typeof( Texture ) );
+			if( texture == null )
+				Debug.Log( "UI texture is being autoloaded and it doesnt exist: " + textureName );
+			material.SetTexture( "_MainTex", texture );
+		}
 		
 		// Cache our texture size
 		Texture t = material.GetTexture( "_MainTex" );
