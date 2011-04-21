@@ -97,9 +97,16 @@ public class UIText : System.Object
 	// parse the .fnt file with the font definition.  Font files should be in the Assets/StreamingAssets folder
 	private void loadConfigfile( string fileName )
 	{
-		string localizedStringsFile = Application.dataPath;
-		localizedStringsFile = localizedStringsFile.Substring( 0, localizedStringsFile.Length ) + "/StreamingAssets/" + fileName + ".fnt"; 
+		if( !fileName.EndsWith( ".fnt" ) )
+			fileName = fileName + ".fnt";
 
+		string localizedStringsFile = Application.dataPath;
+		
+#if UNITY_EDITOR
+		localizedStringsFile = localizedStringsFile.Substring( 0, localizedStringsFile.Length ) + "/StreamingAssets/" + fileName; 
+#else
+		localizedStringsFile = localizedStringsFile + "/Raw/" + fileName;
+#endif
 		// create reader & open file
 		StreamReader sr = new StreamReader( new FileStream( localizedStringsFile, FileMode.Open, FileAccess.Read ) );
 		string input = null;
