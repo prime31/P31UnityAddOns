@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-
 public class CreatePlane : ScriptableWizard
 {
     public enum Orientation {Horizontal, Vertical}
@@ -80,9 +79,9 @@ public class CreatePlane : ScriptableWizard
                 for( float x = 0.0f; x < hCount2; x++ )
                 {
                     if( orientation == Orientation.Horizontal )
-                        vertices[index] = new Vector3( x * scaleX, 0.0f, y * scaleY );
+                        vertices[index] = new Vector3( x * scaleX - width / 2, 0.0f, y * scaleY - length / 2);
                     else
-                        vertices[index] = new Vector3( x * scaleX, y * scaleY, 0.0f );
+                        vertices[index] = new Vector3( x * scaleX - width / 2, y * scaleY - length / 2, 0.0f );
                     uvs[index++] = new Vector2( x * uvFactorX, y * uvFactorY );
                 }
             }
