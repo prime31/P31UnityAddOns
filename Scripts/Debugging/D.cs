@@ -14,24 +14,33 @@ public class D
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_LOG" )]
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_WARN" )]
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_ERROR" )]
-	public static void log( string format, params object[] paramList )
+	public static void log( object format, params object[] paramList )
 	{
-		Debug.Log( string.Format( format, paramList ) );
+		if( format is string )
+			Debug.Log( string.Format( format as string, paramList ) );
+		else
+			Debug.Log( format );
 	}
 	
 	
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_WARN" )]
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_ERROR" )]
-	public static void warn( string format, params object[] paramList )
+	public static void warn( object format, params object[] paramList )
 	{
-		Debug.LogWarning( string.Format( format, paramList ) );
+		if( format is string )
+			Debug.LogWarning( string.Format( format as string, paramList ) );
+		else
+			Debug.LogWarning( format );
 	}
 	
 	
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_ERROR" )]
-	public static void error( string format, params object[] paramList )
+	public static void error( object format, params object[] paramList )
 	{
-		Debug.LogError( string.Format( format, paramList ) );
+		if( format is string )
+			Debug.LogError( string.Format( format as string, paramList ) );
+		else
+			Debug.LogError( format );
 	}
 	
 	
