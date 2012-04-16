@@ -11,12 +11,9 @@ Xcode/
 Temp/*
 Library/*
 
-!Library/*.asset
-
 
 
 #Monodevelop
 *.csproj
 *.sln
-/Roboto.userprefs
 /Assembly-CSharp.pidb
