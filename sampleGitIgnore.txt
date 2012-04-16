@@ -16,4 +16,5 @@ Library/*
 #Monodevelop
 *.csproj
 *.sln
+*.userprefs
 /Assembly-CSharp.pidb
