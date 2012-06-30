@@ -129,11 +129,25 @@ public class GlobalDefinesWizard : ScriptableWizard
 			writeFiles( builder.ToString() );
 			
 			AssetDatabase.Refresh();
+			reimportSomethingToForceRecompile();
 		}
 		else
 		{
 			// nothing enabled to save, kill the files
 			deleteFiles();
+		}
+	}
+	
+	
+	private void reimportSomethingToForceRecompile()
+	{
+		var dataPathDir = new DirectoryInfo( Application.dataPath );
+		var dataPathUri = new System.Uri( Application.dataPath );
+		foreach( var file in dataPathDir.GetFiles( "GlobalDefinesWizard.cs", SearchOption.AllDirectories ) )
+		{
+			var relativeUri = dataPathUri.MakeRelativeUri( new System.Uri( file.FullName ) );
+			var relativePath = System.Uri.UnescapeDataString( relativeUri.ToString() );
+			AssetDatabase.ImportAsset( relativePath, ImportAssetOptions.ForceUpdate );
 		}
 	}
 	
