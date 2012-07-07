@@ -7,11 +7,18 @@ Products
 *.perspectivev3
 
 # Unity junk files
-Library/
 Xcode/
+Temp/*
+Library
 
-/UIToolkit/Temp/
-/UIToolkit/UIToolkit.csproj
-/UIToolkit/UIToolkit.sln
-/UIToolkit/UIToolkit.pidb
-/UIToolkit/UIToolkit.userprefs
+*.csproj
+*.pidb
+*.sln
+*.userPrefs
+*.userprefs
+xcuserdata
+xcuserdata/*
+*.suo
+Assembly-CSharp.csproj
+*.pidb
+Assembly-Boo*
