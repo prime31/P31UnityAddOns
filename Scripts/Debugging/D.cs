@@ -9,8 +9,29 @@ using System.Collections;
 
 // setting the conditional to the platform of choice will only compile the method for that platform
 // alternatively, use the #defines at the top of this file
-public class D
+public static class D
 {
+	static D()
+	{
+		 Application.RegisterLogCallback( logCallback );
+	}
+	
+	
+	public static void logCallback( string log, string stackTrace, LogType type )
+	{
+		// error gets a stack trace
+		if( type == LogType.Error )
+		{
+			Console.WriteLine( log );
+			Console.WriteLine( stackTrace );
+		}
+		else
+		{
+			Console.WriteLine( log );
+		}
+	}
+	
+	
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_LOG" )]
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_WARN" )]
 	[System.Diagnostics.Conditional( "DEBUG_LEVEL_ERROR" )]
