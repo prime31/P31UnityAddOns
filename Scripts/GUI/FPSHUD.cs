@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+
+[RequireComponent( typeof( GUIText ) )]
 public class FPSHUD : MonoBehaviour 
 {
-
 	// Attach this to a GUIText to make a frames/second indicator.
 	//
 	// It calculates frames/second over each updateInterval,
