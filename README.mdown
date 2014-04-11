@@ -1,6 +1,4 @@
 Unity
 =======
 
-Unity AddOns and classes.  These would normally go on the Unity Wiki but for easy versioning, downloading and collaboration they live here.
-
-GUISpriteUI is in the process of a major rewrite and is now called UIToolkit and is hosted in it's own repository.
+Most of these projects have been separated into separate git repositories. This repo is here only for historical reasons at this point and is unmaintained.
