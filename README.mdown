@@ -2,3 +2,8 @@ Unity
 =======
 
 Most of these projects have been separated into separate git repositories. This repo is here only for historical reasons at this point and is unmaintained.
+
+
+License
+-----
+[Attribution-NonCommercial-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode) with [simple explanation](http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US) with the attribution clause waived. You are free to use the P31UnityAddOns in any and all games that you make. You cannot sell P31UnityAddOns directly or as part of a larger game asset.
